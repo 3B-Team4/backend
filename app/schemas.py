@@ -1,3 +1,5 @@
+# Used for querying database
+
 from enum import Enum
 from pydantic import BaseModel, Field, EmailStr
 
@@ -19,11 +21,3 @@ class RoomSchema(BaseModel):
 
     class Config:
         orm_mode = True
-        
-class TeamSchema(BaseModel):
-    id: int
-    name: str
-    leaderId: int
-
-    class Config: 
-      orm_mode = True

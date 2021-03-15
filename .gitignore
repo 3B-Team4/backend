@@ -7,3 +7,5 @@ backend/logs/.log*
 /.vs/slnx.sqlite
 .vs
 __pycache__
+.log*
+logs

@@ -1,3 +1,5 @@
+# Socket IO chat
+
 from flask_socketio import send, emit, join_room, leave_room, close_room
 from flask import Flask, render_template, jsonify, request
 from app import app, socketio, models, schemas, database

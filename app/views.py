@@ -1,3 +1,5 @@
+# API urls
+
 from app import app, models, schemas, database
 from flask import jsonify, request
 from typing import List
@@ -37,41 +39,37 @@ def getUsers():
     print(users)
     return jsonify([userSchema.from_orm(user).dict() for user in users])
 
-@app.route('/teams', methods=['GET'])
-@jwt_required
-def getTeams():
-    teamSchema = schemas.TeamSchema
-    teams = models.Team.query.join(models.teamUsers).all()
-    teamList = []
-    for team in teams:
-        teamList.append({
-          'name': team.name,
-          'leader': team.leaderId,
-          'users': [{"id": user.id, "name": user.name, "email": user.email} for user in team.users],
-          'tasks': [{"name": task.name, "desc": task.description} for task in team.tasks]
-        })
-        
-    return jsonify(teamList), 200
-
-# Post call to add teams to database
-@app.route('/addTeams', methods=['POST'])
-def addTeam():
+@app.route('/reportCovidCase', methods=['POST'])
+def reportCovidCase():
     if request.method == 'POST':
-        # get request data; name email password
         if not request.is_json:
             return jsonify({"msg": "Not a proper JSON"}), 400
-        name = request.json.get('name')
-        leaderId = request.json.get('leaderId')
-        
-        team = models.Team(name=name, leaderId=leaderId)
-        try:
-            database.db_session.add(team)
-            database.db_session.commit()
 
-            token = {
-            'access_token': create_access_token(identity={'id': team.id, 'name': team.name, 'leaderId': team.leaderId}),
-            }
-        except Exception as e:
-            print(e)
-            return jsonify({"msg": "Cannot add team"}), 401
-        return jsonify(token), 200
+        print(request.json)
+
+        first_name = request.json.get('first_name')
+        last_name = request.json.get('last_name')
+        mobile = request.json.get('mobile')
+        lat = request.json.get('lat')
+        lng = request.json.get('lng')
+
+        covidCase = models.CovidCases(first_name=first_name, last_name=last_name, mobile=mobile,
+                                      lat=lat, lng=lng)
+        try:
+            database.db_session.add(covidCase)
+            database.db_session.commit()  # SA will insert a relationship row
+        except:
+            return jsonify({"msg": "Cannot Create Covid Case"}), 500
+        return jsonify({"msg": "Covid Case Created"}), 200
+
+
+@app.route('/getReportedCases', methods=['GET'])
+def getReportedCases():
+   cases = models.CovidCases.query.all()
+   caseList = []
+   for case in cases:
+        caseList.append({
+        'lat': case.lat,
+        'lng': case.lng,
+        })
+   return jsonify(caseList), 200

@@ -1,8 +1,8 @@
 # backend
 ## steps to run
 
-On a seperate terminal
-* Ensure python 3.8 64 bit and pip is installed
+On terminal/cmd
+* Ensure python 3.9 64 bit and pip is installed
 * Install virtualenv `pip install virtualenv`
 * cd into __backend__ folder
 * run `python -m venv venv`
@@ -30,7 +30,6 @@ If you want to use bash script to launch project
 # Common problems
 ## Errors when pulling new changes or changing branches
 * Try to update packages for both python and react
-  * __Frontend__ - npm install
   * __Backend__ - pip install -r requirements.txt
 
 ## Errors when trying to push to github
@@ -49,8 +48,3 @@ If you want to use bash script to launch project
   * uncomment populate_db()
   * start backend
   * if works revert the changes above
-
-## Proxy errors
-* /Ensure backend and frontend are running
-* Go to `frontend/package.json`, and ensure that line 5 http://localhost:5000 if not runnning in docker. If running docker needs to be http://backend:5000
-* go to `frontend/src/chat/chat.js` and ensure that line 20 is http://localhost:5000 if not runnning in docker. If running docker needs to be http://backend:5000
