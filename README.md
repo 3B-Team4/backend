@@ -15,36 +15,10 @@ On terminal/cmd
 
 # Docker
 If you want to use docker this is how.
-* change url in chat.js line 49 to "http://backend:5000"
-* change url in package.json line 5 to "http://backend:5000"
-* ensure docker and docker-compose is installed
-* cd into root directory
-* run `docker-compose build`
-* run `docker-compose up` a
+* `docker build -t backend .`
+* `docker run -p 5000:5000 --name backend backend`
 
 # Bash
 If you want to use bash script to launch project
 * cd into root directory
 * run `bash build.sh`
-
-# Common problems
-## Errors when pulling new changes or changing branches
-* Try to update packages for both python and react
-  * __Backend__ - pip install -r requirements.txt
-
-## Errors when trying to push to github
-* Ensure that you have been given access to the github
-
-## Database errors
-* Try to delete the current database file.
-  * stop backend
-  * delete database.db
-  * start backend
-  
-* Alternative: go to \_\_init\_\_.py 
-  * stop backend
-  * comment database.init_db()
-  * uncomment database.reset_db()
-  * uncomment populate_db()
-  * start backend
-  * if works revert the changes above

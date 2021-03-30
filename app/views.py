@@ -1,75 +1,44 @@
-# API urls
-
-from app import app, models, schemas, database
+from app import app
 from flask import jsonify, request
-from typing import List
-from flask_jwt_extended import (
-    jwt_required,
-    get_jwt_identity
-)
+import lightgbm as lgb
 
 import logging
 logger = logging.getLogger(__name__)
 
+
 @app.route('/')
 def index():
     """
-    Sample route for getting user data
-    inputs: json with email and password object
-    outputs: json with access token and refresh token.
+    Hi
     """
-    userSchema = schemas.UserSchema
-    users = models.User.query.with_entities(models.User.id, models.User.name, models.User.email, models.User.userType).all()
-    print(users)
-    return jsonify([userSchema.from_orm(user).dict() for user in users])
+    return 'Hello, World!'
 
 
-@app.route('/protected', methods=['GET'])
-@jwt_required
-def protected():
-    # Access the identity of the current user with get_jwt_identity
-    current_user = get_jwt_identity()
-    return jsonify(current_user), 200
-
-@app.route('/users', methods=['GET'])
-@jwt_required
-def getUsers():
-    userSchema = schemas.UserSchema
-    users = models.User.query.with_entities(models.User.id, models.User.name, models.User.email, models.User.userType).all()
-    print(users)
-    return jsonify([userSchema.from_orm(user).dict() for user in users])
-
-@app.route('/reportCovidCase', methods=['POST'])
-def reportCovidCase():
+# @app.route('/prediction',  methods=['POST'])
+@app.route('/prediction')
+def predict():
     if request.method == 'POST':
         if not request.is_json:
             return jsonify({"msg": "Not a proper JSON"}), 400
+        name = request.json.get('name')
+        gender = request.json.get('gender')
+        age = request.json.get('age')
+        headaches = request.json.get('headaches')
+        fever = request.json.get('fever')
+        covidContact = request.json.get('covidContact')
+        soreThroat = request.json.get('soreThroat')
+        shortnessOfBreath = request.json.get('shortnessOfBreath')
+        cough = request.json.get('cough')
 
-        print(request.json)
+        model = lgb.Booster(model_file="./app/model/lgbm_model_all_features.txt")
+        prediction = model.predict([[1,0,0,1,0,0,0,1]])
+        print(prediction)
+        return jsonify({"prediction": prediction[0]}), 200
+    return jsonify({"msg": "Not a proper JSON"}), 500
 
-        first_name = request.json.get('first_name')
-        last_name = request.json.get('last_name')
-        mobile = request.json.get('mobile')
-        lat = request.json.get('lat')
-        lng = request.json.get('lng')
-
-        covidCase = models.CovidCases(first_name=first_name, last_name=last_name, mobile=mobile,
-                                      lat=lat, lng=lng)
-        try:
-            database.db_session.add(covidCase)
-            database.db_session.commit()  # SA will insert a relationship row
-        except:
-            return jsonify({"msg": "Cannot Create Covid Case"}), 500
-        return jsonify({"msg": "Covid Case Created"}), 200
-
-
-@app.route('/getReportedCases', methods=['GET'])
-def getReportedCases():
-   cases = models.CovidCases.query.all()
-   caseList = []
-   for case in cases:
-        caseList.append({
-        'lat': case.lat,
-        'lng': case.lng,
-        })
-   return jsonify(caseList), 200
+@app.route('/test')
+def test():
+    model = lgb.Booster(model_file="./app/model/lgbm_model_all_features.txt")
+    prediction = model.predict([[1,0,0,1,0,0,0,1]])
+    print(prediction)
+    return jsonify({"prediction": prediction[0]}), 200
