@@ -15,8 +15,8 @@ def index():
 
 
 # @app.route('/prediction',  methods=['POST'])
-@app.route('/prediction', method=['POST'])
-def predict():
+@app.route('/prediction', method=['GET', 'POST'])
+def prediction():
     if request.method == 'POST':
         if not request.is_json:
             return jsonify({"msg": "Not a proper JSON"}), 400
