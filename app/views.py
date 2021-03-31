@@ -15,7 +15,7 @@ def index():
 
 
 # @app.route('/prediction',  methods=['POST'])
-@app.route('/prediction')
+@app.route('/prediction', method=['POST'])
 def predict():
     if request.method == 'POST':
         if not request.is_json:
@@ -28,17 +28,21 @@ def predict():
         soreThroat = request.json.get('soreThroat')
         shortnessOfBreath = request.json.get('shortnessOfBreath')
         cough = request.json.get('cough')
-        dataset = [age, sex, cough, shortnessOfBreath, fever, soreThroat, headaches, covidContact]
 
-        model = lgb.Booster(model_file="./app/model/lgbm_model_all_features.txt")
+        dataset = [age, sex, cough, shortnessOfBreath,
+                   fever, soreThroat, headaches, covidContact]
+
+        model = lgb.Booster(
+            model_file="./app/model/lgbm_model_all_features.txt")
         prediction = model.predict([dataset])
         print(prediction)
         return jsonify({"prediction": prediction[0]}), 200
     return jsonify({"msg": "Not a proper JSON"}), 500
 
+
 @app.route('/test')
 def test():
     model = lgb.Booster(model_file="./app/model/lgbm_model_all_features.txt")
-    prediction = model.predict([[1,0,0,1,0,0,0,1]])
+    prediction = model.predict([[1, 0, 0, 1, 0, 0, 0, 1]])
     print(prediction)
     return jsonify({"prediction": prediction[0]}), 200
