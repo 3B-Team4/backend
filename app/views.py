@@ -15,7 +15,7 @@ def index():
 
 
 # @app.route('/prediction',  methods=['POST'])
-@app.route('/prediction', method=['GET', 'POST'])
+@app.route('/prediction', methods=['GET', 'POST'])
 def prediction():
     if request.method == 'POST':
         if not request.is_json:
